@@ -1,28 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"os"
-	"path"
 
-	"github.com/joho/godotenv"
-	"github.com/labstack/echo/v4"
+	"github.com/gin-gonic/gin"
 )
-	
+
 func main() {
-    fmt.Println("Go Program")
-	server:=echo.New()
-	server.GET(path.Join("/"), Version)
-
-	godotenv.Load()
-	port:=os.Getenv("PORT")
-
-	address := fmt.Sprintf("%s:%s","0.0.0.0",port)
-	fmt.Println(address)
-	server.Start(address)
-}
-
-func Version(context echo.Context) error{
-	return context.JSON(http.StatusOK, map[string]interface{}{"version":1})
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000" // Default port if not specified
+	}
+	
+	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+	r.Run(":"+port) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
